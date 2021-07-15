@@ -67,6 +67,18 @@ class HeroListController: UIViewController, UITableViewDataSource, UITableViewDe
     @IBOutlet var heroTabBar: UITabBar!
 
     @IBAction func addHero(_ sender: Any) {
+        let managedObjectContext = fetchedResultsController.managedObjectContext as NSManagedObjectContext
+        let entity: NSEntityDescription = fetchedResultsController.fetchRequest.entity!
+        NSEntityDescription.insertNewObject(forEntityName: entity.name!, into: managedObjectContext)
+
+        do {
+            try managedObjectContext.save()
+        } catch let error {
+            let title = NSLocalizedString("Error Saving Entity", comment: "Error Saving Entity")
+            let message = NSLocalizedString("Error was : \(error), quitting", comment: "Error was : \(error), quitting")
+
+            showAlertWithCompletion(title: title, message: message, buttonTitle: "Aw nuts", completion: { _ in exit(-1) })
+        }
     }
 
     override func viewDidLoad() {
@@ -79,24 +91,46 @@ class HeroListController: UIViewController, UITableViewDataSource, UITableViewDe
 
         let item = heroTabBar.items?[selectedTab]
         heroTabBar.selectedItem = item
+
+        // Fetch any existing entities
+        do {
+            try fetchedResultsController.performFetch()
+        } catch let error {
+            let title = NSLocalizedString("Error Saving Entity", comment: "Error Saving Entity")
+            let message = NSLocalizedString("Error was : \(error), quitting",
+                                            comment: "Error was : \(error), quitting")
+            showAlertWithCompletion(title: title, message: message,
+                                    buttonTitle: "Aw nuts", completion: { _ in exit(-1) })
+        }
     }
 
     // MARK: - Table view data source
 
     func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+        return fetchedResultsController.sections?.count ?? 0
     }
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return 0
+        return fetchedResultsController.sections?[section].numberOfObjects ?? 0
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "HeroListCell", for: indexPath)
 
-        // Configure the cell...
+        let hero = fetchedResultsController.object(at: indexPath) as! NSManagedObject
+        let tabArray = heroTabBar.items
+        let tab = tabArray?.firstIndex(of: heroTabBar.selectedItem!)
+
+        switch tab {
+        case tabBarKeys.ByName.rawValue:
+            cell.textLabel?.text = hero.value(forKey: "name") as? String
+            cell.detailTextLabel?.text = hero.value(forKey: "secretIdentity") as? String
+        case tabBarKeys.BySecretIdentity.rawValue:
+            cell.textLabel?.text = hero.value(forKey: "secretIdentity") as? String
+            cell.detailTextLabel?.text = hero.value(forKey: "name") as? String
+        default:
+            ()
+        }
 
         return cell
     }
@@ -109,17 +143,30 @@ class HeroListController: UIViewController, UITableViewDataSource, UITableViewDe
      }
      */
 
-    /*
-     // Override to support editing the table view.
-     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-         if editingStyle == .delete {
-             // Delete the row from the data source
-             tableView.deleteRows(at: [indexPath], with: .fade)
-         } else if editingStyle == .insert {
-             // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-         }
-     }
-     */
+    func showAlertWithCompletion(title: String, message: String, buttonTitle: String = "OK", completion: ((UIAlertAction?) -> Void)!) {
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: buttonTitle, style: .default, handler: completion)
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
+    }
+
+    // Override to support editing the table view.
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        let managedObjectContext = fetchedResultsController.managedObjectContext as NSManagedObjectContext?
+        if editingStyle == .delete {
+            managedObjectContext!.delete(fetchedResultsController.object(at: indexPath) as! NSManagedObject)
+            do {
+                try managedObjectContext?.save()
+            } catch let error {
+                let title = NSLocalizedString("Error Saving Entity", comment: "Error Saving Entity")
+                let message = NSLocalizedString("Error was : \(String(describing: error)), quitting", comment: "Error was : \(String(describing: error)), quitting")
+                showAlertWithCompletion(title: title, message: message, buttonTitle: "Aw Nuts",
+                                        completion: { _ in exit(-1) })
+            }
+        } else if editingStyle == .insert {
+            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
+        }
+    }
 
     /*
      // Override to support rearranging the table view.
@@ -153,6 +200,20 @@ extension HeroListController: UITabBarDelegate {
         let items: Array = heroTabBar.items!
         let tabIndex = items.firstIndex(of: item)
         defaults.setValue(tabIndex, forKey: kSelectedTabDefaultKey)
+
+        NSFetchedResultsController<NSFetchRequestResult>.deleteCache(withName: "Hero")
+        _fetchedResultsController = nil
+
+        do {
+            try fetchedResultsController.performFetch()
+            heroTableView.reloadData()
+        } catch let error {
+            let title = NSLocalizedString("Error Saving Entity", comment: "Error Saving Entity")
+            let message = NSLocalizedString("Error was : \(error), quitting",
+                                            comment: "Error was : \(error), quitting")
+            showAlertWithCompletion(title: title, message: message, buttonTitle: "Aw nuts",
+                                    completion: { _ in exit(-1) })
+        }
     }
 }
 
