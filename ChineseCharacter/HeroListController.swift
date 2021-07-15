@@ -7,6 +7,13 @@
 
 import UIKit
 
+let kSelectedTabDefaultKey = "Selected Tab"
+
+enum tabBarKey: Int {
+    case ByName
+    case BySecretIdentity
+}
+
 class HeroListController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     @IBOutlet weak var heroTableView: UITableView!
     @IBOutlet weak var heroTabBar: UITabBar!
@@ -19,7 +26,10 @@ class HeroListController: UIViewController, UITableViewDataSource, UITableViewDe
 
         self.navigationItem.rightBarButtonItem = self.editButtonItem
         
-        let item = heroTabBar.items?[0]
+        let defaults = UserDefaults.standard
+        let selectedTab = defaults.integer(forKey: kSelectedTabDefaultKey)
+        
+        let item = heroTabBar.items?[selectedTab]
         heroTabBar.selectedItem = item
     }
 
@@ -88,4 +98,13 @@ class HeroListController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     */
 
+}
+
+extension HeroListController: UITabBarDelegate {
+    func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        let defaults = UserDefaults.standard
+        let items: Array = heroTabBar.items!
+        let tabIndex = items.firstIndex(of: item)
+        defaults.setValue(tabIndex, forKey: kSelectedTabDefaultKey)
+    }
 }
