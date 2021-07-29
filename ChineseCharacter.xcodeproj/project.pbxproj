@@ -16,6 +16,7 @@
 		080B086126A009E100FDE53F /* ChineseCharacterUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 080B086026A009E100FDE53F /* ChineseCharacterUITests.swift */; };
 		080B086F26A00E5600FDE53F /* HeroListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 080B086E26A00E5600FDE53F /* HeroListController.swift */; };
 		080B087126A011E300FDE53F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 080B087026A011E300FDE53F /* LaunchScreen.storyboard */; };
+		080B087326A02C3A00FDE53F /* HeroDtailController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 080B087226A02C3A00FDE53F /* HeroDtailController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -51,6 +52,7 @@
 		080B086226A009E100FDE53F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		080B086E26A00E5600FDE53F /* HeroListController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroListController.swift; sourceTree = "<group>"; };
 		080B087026A011E300FDE53F /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
+		080B087226A02C3A00FDE53F /* HeroDtailController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeroDtailController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +111,7 @@
 				080B087026A011E300FDE53F /* LaunchScreen.storyboard */,
 				080B084C26A009E100FDE53F /* Info.plist */,
 				080B084426A009DC00FDE53F /* ChineseCharacter.xcdatamodeld */,
+				080B087226A02C3A00FDE53F /* HeroDtailController.swift */,
 			);
 			path = ChineseCharacter;
 			sourceTree = "<group>";
@@ -261,6 +264,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				080B087326A02C3A00FDE53F /* HeroDtailController.swift in Sources */,
 				080B084626A009DC00FDE53F /* ChineseCharacter.xcdatamodeld in Sources */,
 				080B086F26A00E5600FDE53F /* HeroListController.swift in Sources */,
 				080B083C26A009DC00FDE53F /* AppDelegate.swift in Sources */,
